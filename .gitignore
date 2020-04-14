@@ -136,9 +136,10 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-data/
 /model/PhoBERT_base_transformers.tar.gz
 /model/PhoBERT_large_transformers.tar.gz
 /model/wget-log
 /model/PhoBERT_large/model.bin
-a.py
+model/
+/a.py
+/data
