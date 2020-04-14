@@ -66,7 +66,7 @@ vocab = Dictionary()
 vocab.add_from_file(args.dict_path)
 
 # Load training data
-train_df = pd.read_csv(args.train_path,sep='\t').fillna("###")
+train_df = pd.read_csv("data/zalo/train.csv", encoding='utf8', engine='python', sep=',').fillna("###")
 train_df.text = train_df.text.progress_apply(lambda x: ' '.join([' '.join(sent) for sent in rdrsegmenter.tokenize(x)]))
 y = train_df.label.values
 X_train = convert_lines(train_df, vocab, bpe,args.max_sequence_length)
@@ -148,5 +148,6 @@ for fold, (train_idx, val_idx) in enumerate(splits):
         score = f1_score(y[val_idx], val_preds > 0.5)
         print(f"\nAUC = {roc_auc_score(y[val_idx], val_preds):.4f}, F1 score @0.5 = {score:.4f}")
         if score >= best_score:
-            torch.save(model_bert.state_dict(),os.path.join(args.ckpt_path, f"model_{fold}.bin"))
+            # torch.save(model_bert.state_dict(),os.path.join(args.ckpt_path, f"model_{fold}.bin"))
             best_score = score
+    print(best_score)
