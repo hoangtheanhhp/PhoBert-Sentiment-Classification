@@ -36,7 +36,7 @@ parser.add_argument('--fold', type=int, default=0)
 parser.add_argument('--seed', type=int, default=69)
 parser.add_argument('--lr', type=float, default=3e-5)
 parser.add_argument('--ckpt_path', type=str, default='./models')
-parser.add_argument('--bpe-codes', default="./phobert/bpe.codes",type=str, help='path to fastBPE BPE')
+parser.add_argument('--bpe-codes', default="./model/PhoBERT_large/bpe.codes",type=str, help='path to fastBPE BPE')
 
 args = parser.parse_args()
 bpe = fastBPE(args)
@@ -148,5 +148,8 @@ for fold, (train_idx, val_idx) in enumerate(splits):
         score = f1_score(y[val_idx], val_preds > 0.5)
         print(f"\nAUC = {roc_auc_score(y[val_idx], val_preds):.4f}, F1 score @0.5 = {score:.4f}")
         if score >= best_score:
-            torch.save(model_bert.state_dict(),os.path.join(args.ckpt_path, f"model_{fold}.bin"))
+            # torch.save(model_bert.state_dict(),os.path.join(args.ckpt_path, f"model_{fold}.bin"))
             best_score = score
+
+    print(best_score)
+
