@@ -28,7 +28,7 @@ parser.add_argument('--dict_path', type=str, default="./phobert/dict.txt")
 parser.add_argument('--config_path', type=str, default="./phobert/config.json")
 parser.add_argument('--rdrsegmenter_path', type=str, required=True)
 parser.add_argument('--pretrained_path', type=str, default='./phobert/model.bin')
-parser.add_argument('--max_sequence_length', type=int, default=256)
+parser.add_argument('--max_sequence_length', type=int, default=512)
 parser.add_argument('--batch_size', type=int, default=24)
 parser.add_argument('--accumulation_steps', type=int, default=5)
 parser.add_argument('--epochs', type=int, default=5)
@@ -66,11 +66,11 @@ vocab = Dictionary()
 vocab.add_from_file(args.dict_path)
 
 # Load training data
-train_df = pd.read_csv("data/zalo/train.csv", encoding='utf8', engine='python', sep=',').fillna("###")
+train_df = pd.read_csv(args.train_path, encoding='utf8', engine='python', sep=',').fillna("###")
 train_df.text = train_df.text.progress_apply(lambda x: ' '.join([' '.join(sent) for sent in rdrsegmenter.tokenize(x)]))
 y = train_df.label.values
 X_train = convert_lines(train_df, vocab, bpe,args.max_sequence_length)
-
+print(type(X_train))
 # Creating optimizer and lr schedulers
 param_optimizer = list(model_bert.named_parameters())
 no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -92,6 +92,8 @@ for fold, (train_idx, val_idx) in enumerate(splits):
     best_score = 0
     if fold != args.fold:
         continue
+    print(type(X_train[train_idx]))
+    print(X_train[train_idx])
     train_dataset = torch.utils.data.TensorDataset(torch.tensor(X_train[train_idx],dtype=torch.long), torch.tensor(y[train_idx],dtype=torch.long))
     valid_dataset = torch.utils.data.TensorDataset(torch.tensor(X_train[val_idx],dtype=torch.long), torch.tensor(y[val_idx],dtype=torch.long))
     tq = tqdm(range(args.epochs + 1))
